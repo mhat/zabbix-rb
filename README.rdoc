@@ -1,6 +1,17 @@
-= zabbix
+= zabbix-rb
+                __       __                                 __        
+               /\ \     /\ \      __                       /\ \       
+ ____      __  \ \ \____\ \ \____/\_\   __  _          _ __\ \ \____  
+/\_ ,`\  /'__`\ \ \ '__`\\ \ '__`\/\ \ /\ \/'\ _______/\`'__\ \ '__`\ 
+\/_/  /_/\ \L\.\_\ \ \L\ \\ \ \L\ \ \ \\/>  <//\______\ \ \/ \ \ \L\ \
+  /\____\ \__/.\_\\ \_,__/ \ \_,__/\ \_\/\_/\_\/______/\ \_\  \ \_,__/
+  \/____/\/__/\/_/ \/___/   \/___/  \/_/\//\/_/         \/_/   \/___/ 
 
-Description goes here.
+
+I threw this together this afternoon. It's absulotely untested. I only just 
+corrected a few syntax errors. 
+
+
 
 == Note on Patches/Pull Requests
  
