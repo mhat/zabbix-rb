@@ -11,6 +11,31 @@
 I threw this together this afternoon. It's absulotely untested. I only just 
 corrected a few syntax errors. 
 
+== usage 
+
+=== easy
+
+    Zabbix::Sender::Easy.run(:"com.yammer.cron.brithday_email_job") do |zbx|
+      Users.each_with_index do |user, idx|
+        HappyBirthday.send if user.birthday?
+    
+        ## let zabbix know we're alive every N users, whatever
+        zbx.send_heartbeat if idx % N == 0
+      end
+    end
+
+=== tedious
+
+    zbx = Zabbix::Sender.new
+    zbx.send_start(:"com.yammer.cron.birthday_email_job")
+    
+    Users.each_with_index do |user, idx|
+      HappyBirthday.send if user.birthday? 
+    
+      ## let zabbix know we're alive every N users, whatever 
+      zbx.send_heartbeat if idx % N == 0
+    end
+    zbx.send_stop(:"com.yammer.cron.birthday_email_job")
 
 
 == Note on Patches/Pull Requests
