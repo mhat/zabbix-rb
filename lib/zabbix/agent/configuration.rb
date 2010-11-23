@@ -1,6 +1,6 @@
 module Zabbix::Agent
   class Configuration
-    def initialize(config={}
+    def initialize(config={})
       @config = config
     end
 
@@ -83,4 +83,5 @@ module Zabbix::Agent
 
       Configuration.new(zabbix_conf)
     end
+  end
 end

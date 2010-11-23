@@ -1,3 +1,6 @@
+require 'socket'
+require 'yajl'
+
 class Zabbix::Sender
   attr_reader :configured 
 

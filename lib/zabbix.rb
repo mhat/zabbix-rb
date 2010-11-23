@@ -1,7 +1,3 @@
-
-require "socket"
-require "yajl"
-
 module Zabbix
 end
 
