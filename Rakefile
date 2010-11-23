@@ -4,12 +4,12 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "zabbix"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "mknopp@yammer-inc.com"
-    gem.homepage = "http://github.com/mhat/zabbix"
-    gem.authors = ["Matthew Knopp"]
+    gem.name        = "zabbix"
+    gem.summary     = %Q{send data to zabbix from ruby}
+    gem.description = %Q{send data to zabbix from ruby}
+    gem.email       = "mknopp@yammer-inc.com"
+    gem.homepage    = "http://github.com/mhat/zabbix"
+    gem.authors     = ["Matthew Knopp"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
@@ -20,17 +20,17 @@ end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+  test.libs    << 'lib' << 'test'
+  test.pattern  = 'test/**/test_*.rb'
+  test.verbose  = true
 end
 
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/test_*.rb'
-    test.verbose = true
+    test.libs    << 'test'
+    test.pattern  = 'test/**/test_*.rb'
+    test.verbose  = true
   end
 rescue LoadError
   task :rcov do
@@ -44,10 +44,9 @@ task :default => :test
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
+  version       = File.exist?('VERSION') ? File.read('VERSION') : ""
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "zabbix #{version}"
+  rdoc.title    = "zabbix #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
