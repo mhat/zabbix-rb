@@ -5,7 +5,7 @@ module Zabbix::Agent
     end
 
     def server
-      @config['ServerName']
+      @config['Server']
     end
 
     def server_port
@@ -60,7 +60,7 @@ module Zabbix::Agent
       @config[key]
     end 
 
-    def self.read(zabbix_conf=nil)
+    def self.read(zabbix_conf_file=nil)
       zabbix_conf_file ||= "/etc/zabbix/zabbix-agentd.conf"
       zabbix_conf        = {} 
 
@@ -72,7 +72,9 @@ module Zabbix::Agent
         line.gsub!(/#.*/, '')
 
         ## zabbix splits on equals 
-        key, value = line.split("|", 2)
+        key, value = line.split("=", 2)
+        key.chomp!
+        value.chomp!
 
         ## zabbix keys look like strings
         next unless key  =~ /[A-Za-z0-9]+/
