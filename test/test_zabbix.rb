@@ -18,7 +18,7 @@ class TestZabbix < Test::Unit::TestCase
     assert_equal true, zbx.configured?
   end 
 
-  should "send some data" do
+  should "should send start stop and heartbeat" do
     config_file = "#{File.dirname(__FILE__)}/zabbix_agentd.conf"
     zbx  = Zabbix::Sender.new :config_file => config_file
     key  = :"foo.bar.baz"
@@ -28,5 +28,14 @@ class TestZabbix < Test::Unit::TestCase
     assert_equal true, zbx.send_stop(key, :host => host)
   end
 
-  
+  should "should bulk send data" do 
+    config_file = "#{File.dirname(__FILE__)}/zabbix_agentd.conf"
+    zbx  = Zabbix::Sender::Buffer.new :config_file => config_file
+    key  = :"foo.bar.baz"
+    host = "testhost.example.com"
+    zbx.append key, "8===D",   :host => host 
+    zbx.append key, "8====D",  :host => host 
+    zbx.append key, "8=====D", :host => host 
+    assert_equal true, zbx.flush   
+  end
 end

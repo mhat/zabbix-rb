@@ -1,9 +1,12 @@
 module Zabbix
 end
 
+require "socket" 
+require "yajl"
 require "zabbix/agent/configuration"
 require "zabbix/sender"
 require "zabbix/sender/easy"
+require "zabbix/sender/buffer"
 
 ## we could use zabbix-sender, but that appears to be unecessary; we can instead 
 ## simply talk to the zabbit-server. we get there via the parent. 

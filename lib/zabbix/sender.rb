@@ -1,6 +1,3 @@
-require 'socket'
-require 'yajl'
-
 class Zabbix::Sender
 
   DEFAULT_SERVER_PORT = 10051
@@ -28,9 +25,16 @@ class Zabbix::Sender
 
 
   def connect
-    TCPSocket.new(@host, @port)
+    @socket ||= TCPSocket.new(@host, @port)
   end
 
+  def disconnect
+    if @socket
+      @socket.close unless @socket.closed?
+      @socket = nil 
+    end
+    return true
+  end
 
   def send_start(key, opts={})
     send_data("#{key}.start", 1, opts)
@@ -48,35 +52,49 @@ class Zabbix::Sender
 
   def send_data(key, value, opts={})
     return false unless configured? 
-    host   = opts[:host] || Socket.gethostname
-    ts     = opts[:ts]   || Time.now.to_i 
-    socket = connect 
+    host  = opts[:host]
+    clock = opts[:ts  ]
+    return send_zabbix_request([ cons_zabbix_data_element(host, key, value, clock) ])
+  end  
 
-    # construct json
-    json = Yajl::Encoder.encode({ 
-      :request => "agent data",
-      :clock   => ts,
-      :data    => [{
-        :host       => host,
-        :key        => key,
-        :value      => value,
-        :clock      => ts
-      }]
+  private 
+
+  def cons_zabbix_data_element(host, key, value, clock=Time.now.to_i)
+    return {
+      :host  => host, 
+      :key   => key, 
+      :value => value,
+      :clock => clock
+    }
+  end
+
+  def send_zabbix_request(data)
+    status  = false
+    request = Yajl::Encoder.encode({
+      :request => 'agent data' , 
+      :clock   => Time.now.to_i,
+      :data    => data
     })
 
-    # send the data
-    socket.write "ZBXD\x01"
-    socket.write [json.size].pack('q')
-    socket.write json
-    socket.flush
+    begin 
+      sock = connect
+      sock.write "ZBXD\x01"
+      sock.write [request.size].pack('q')
+      sock.write request 
+      sock.flush
 
-    # read the response message if desired
-    #header = socket.read(5)
-    #len    = socket.read(8)
-    #len    = len.unpack('q').shift
-    #msg    = socket.read(len)
-    socket.close 
+      # FIXME: check header to make sure it's the message we expect?
+      header   = sock.read(5)
+      len      = sock.read(8)
+      len      = len.unpack('q').shift
+      response = Yajl::Parser.parse(sock.read(len))
+      status   = true if response['response'] == 'success'
+    rescue => e
+      ## FIXME
+    ensure
+      disconnect
+    end 
 
-    return true
-  end  
+    return status
+  end
 end
