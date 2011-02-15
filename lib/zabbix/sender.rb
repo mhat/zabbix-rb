@@ -45,6 +45,9 @@ class Zabbix::Sender
     send_data("#{key}.stop", 1, opts)
   end
 
+  def send_break(key, err, opts={})
+    send_data("#{key}.break", err, opts)
+  end
 
   def send_heartbeat(key, msg="", opts={})
     send_data("#{key}.heartbeat", msg, opts)
