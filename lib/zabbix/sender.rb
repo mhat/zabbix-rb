@@ -55,8 +55,8 @@ class Zabbix::Sender
 
   def send_data(key, value, opts={})
     return false unless configured? 
-    host  = opts[:host]
-    clock = opts[:ts  ]
+    host  = opts[:host] || @host
+    clock = opts[:ts  ] || Time.now.to_i
     return send_zabbix_request([ cons_zabbix_data_element(host, key, value, clock) ])
   end  
 
