@@ -2,36 +2,38 @@ class Zabbix::Sender
 
   DEFAULT_SERVER_PORT = 10051
 
-  attr_reader :configured 
+  attr_reader :configured
 
   def initialize(opts={})
+    @client_host = Socket.gethostbyname(Socket.gethostname)[0]
+
     if opts[:config_file]
       config = Zabbix::Agent::Configuration.read(opts[:config_file])
-      @host  = config.server
-      @port  = config.server_port || DEFAULT_SERVER_PORT
+      @server_host  = config.server
+      @server_port  = config.server_port || DEFAULT_SERVER_PORT
     end
 
     if opts[:host]
-      @host = opts[:host]
-      @port = opts[:port] || DEFAULT_SERVER_PORT
+      @server_host = opts[:host]
+      @server_port = opts[:port] || DEFAULT_SERVER_PORT
     end
 
   end
 
 
   def configured?
-    @configured ||= !(@host.nil? and @port.nil?)
+    @configured ||= !(@server_host.nil? and @server_port.nil?)
   end
 
 
   def connect
-    @socket ||= TCPSocket.new(@host, @port)
+    @socket ||= TCPSocket.new(@server_host, @server_port)
   end
 
   def disconnect
     if @socket
       @socket.close unless @socket.closed?
-      @socket = nil 
+      @socket = nil
     end
     return true
   end
@@ -41,7 +43,7 @@ class Zabbix::Sender
   end
 
 
-  def send_stop(key, opts={}) 
+  def send_stop(key, opts={})
     send_data("#{key}.stop", 1, opts)
   end
 
@@ -54,36 +56,36 @@ class Zabbix::Sender
   end
 
   def send_data(key, value, opts={})
-    return false unless configured? 
-    host  = opts[:host] || @host
-    clock = opts[:ts  ] || Time.now.to_i
-    return send_zabbix_request([ cons_zabbix_data_element(host, key, value, clock) ])
-  end  
+    return false unless configured?
+    return send_zabbix_request([
+      cons_zabbix_data_element(key, value, opts)
+    ])
+  end
 
-  private 
+  private
 
-  def cons_zabbix_data_element(host, key, value, clock=Time.now.to_i)
+  def cons_zabbix_data_element(key, value, opts={})
     return {
-      :host  => host, 
-      :key   => key, 
+      :key   => key,
       :value => value,
-      :clock => clock
+      :host  => opts[:host] || @client_host,
+      :clock => opts[:ts  ] || Time.now.to_i,
     }
   end
 
   def send_zabbix_request(data)
     status  = false
     request = Yajl::Encoder.encode({
-      :request => 'agent data' , 
+      :request => 'agent data' ,
       :clock   => Time.now.to_i,
       :data    => data
     })
 
-    begin 
+    begin
       sock = connect
       sock.write "ZBXD\x01"
       sock.write [request.size].pack('q')
-      sock.write request 
+      sock.write request
       sock.flush
 
       # FIXME: check header to make sure it's the message we expect?
@@ -96,7 +98,7 @@ class Zabbix::Sender
       ## FIXME
     ensure
       disconnect
-    end 
+    end
 
     return status
   end

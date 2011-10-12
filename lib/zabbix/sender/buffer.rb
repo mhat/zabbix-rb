@@ -6,12 +6,7 @@ class Zabbix::Sender::Buffer < Zabbix::Sender
 
   def append(key, value, opts={})
     return false unless configured?
-    @buffer << {
-      :host  => opts[:host] || Socket.gethostname,
-      :clock => opts[:ts  ] || Time.now.to_i,
-      :key   => key, 
-      :value => value, 
-    }
+    @buffer << cons_zabbix_data_element(key, value, opts)
   end  
 
   def flush 
@@ -20,5 +15,6 @@ class Zabbix::Sender::Buffer < Zabbix::Sender
     @buffer.clear
     return ret
   end
+  alias send! flush
 
 end
