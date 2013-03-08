@@ -70,11 +70,13 @@ module Zabbix::Agent
 
         ## strip tail comments
         line.gsub!(/#.*/, '')
+        line.strip!
+        next if line.empty?
 
         ## zabbix splits on equals 
         key, value = line.split("=", 2)
-        key.chomp!
-        value.chomp!
+        key.chomp! if key
+        value.chomp! if value
 
         ## zabbix keys look like strings
         next unless key  =~ /[A-Za-z0-9]+/
