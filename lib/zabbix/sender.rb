@@ -1,11 +1,12 @@
 class Zabbix::Sender
 
+  DEFAULT_CLIENT_HOST = "127.0.0.1"
   DEFAULT_SERVER_PORT = 10051
 
   attr_reader :configured
 
   def initialize(opts={})
-    @client_host = Socket.gethostbyname(Socket.gethostname)[0]
+    @client_host = opts[:client] || DEFAULT_CLIENT_HOST
 
     if opts[:config_file]
       config = Zabbix::Agent::Configuration.read(opts[:config_file])
