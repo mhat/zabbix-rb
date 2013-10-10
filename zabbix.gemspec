@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
     "test/zabbix_agentd.conf",
     "zabbix.gemspec"
   ]
-  s.homepage = %q{http://github.com/mhat/zabbix}
+  s.homepage = %q{http://github.com/mhat/zabbix-rb}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.2}
   s.summary = %q{send data to zabbix from ruby}
