@@ -73,6 +73,16 @@ class Zabbix::Sender
     }
   end
 
+  def dryrun_zabbix_request(data)
+    request = Yajl::Encoder.encode({
+      :request => 'agent data' ,
+      :clock   => Time.now.to_i,
+      :data    => data
+    },:pretty => true)
+    puts "#{request}"
+  end
+
+
   def send_zabbix_request(data)
     status  = false
     request = Yajl::Encoder.encode({

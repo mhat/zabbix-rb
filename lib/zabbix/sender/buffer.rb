@@ -17,4 +17,11 @@ class Zabbix::Sender::Buffer < Zabbix::Sender
   end
   alias send! flush
 
+  def dryrun
+    return false unless @buffer.size > 0
+    ret = dryrun_zabbix_request(@buffer)
+    @buffer.clear
+    return ret
+  end
+
 end
