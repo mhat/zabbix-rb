@@ -5,7 +5,12 @@ class Zabbix::Sender
   attr_reader :configured
 
   def initialize(opts={})
-    @client_host = Socket.gethostbyname(Socket.gethostname)[0]
+    begin
+      hostname = Socket.gethostname
+      @client_host = Socket.gethostbyname(hostname)[0]
+    rescue SocketError
+      @client_host = hostname
+    end
 
     if opts[:config_file]
       config = Zabbix::Agent::Configuration.read(opts[:config_file])
