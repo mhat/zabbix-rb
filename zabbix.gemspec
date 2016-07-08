@@ -37,6 +37,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.5.2}
   s.summary = %q{send data to zabbix from ruby}
 
+  s.add_dependency("yajl-ruby", ">= 1.2.1")
+
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
