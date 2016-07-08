@@ -3,6 +3,7 @@ end
 
 require "socket" 
 require "yajl"
+require "iniparse"
 require "zabbix/agent/configuration"
 require "zabbix/sender"
 require "zabbix/sender/easy"

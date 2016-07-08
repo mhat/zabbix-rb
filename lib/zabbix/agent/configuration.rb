@@ -60,30 +60,9 @@ module Zabbix::Agent
       @config[key]
     end 
 
-    def self.read(zabbix_conf_file=nil)
-      zabbix_conf_file ||= "/etc/zabbix/zabbix-agentd.conf"
-      zabbix_conf        = {} 
-
-      File.open(zabbix_conf_file).each do |line|
-        ## skip comments
-        next if line =~ /^(\s+)?#/ 
-
-        ## strip tail comments
-        line.gsub!(/#.*/, '')
-
-        ## zabbix splits on equals 
-        key, value = line.split("=", 2)
-        key.chomp!
-        value.chomp!
-
-        ## zabbix keys look like strings
-        next unless key  =~ /[A-Za-z0-9]+/
-
-        ## cool
-        zabbix_conf[key] = value
-      end
-
-      Configuration.new(zabbix_conf)
+    def self.read(zabbix_conf_file="/etc/zabbix/zabbix-agentd.conf")
+      Configuration.new(
+          IniParse.parse(File.read(zabbix_conf_file)).to_h.values.first)
     end
   end
 end
